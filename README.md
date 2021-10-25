@@ -3,6 +3,13 @@
 This repo hosts a Python API for the subcellular application.
 It allows users of the subcellular to download their existing models, run simulations in the cloud.
 
+# Installation
+To install the api, first clone the repo:
+`git clone git@bbpgitlab.epfl.ch:nse/subcellular-api.git`
+
+Then install the required dependences:
+`pip install -r requirements.txt`
+
 # Authentication
 
 In order to be able to download models you will need you user id. To get it go to the subcellular app http://subcellular-bsp-epfl.apps.hbp.eu/ and on the top left corner click on `User` from the pop up copy the user id.
