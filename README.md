@@ -21,7 +21,8 @@ In order to run a simulation firt you need to load a model from it's BNGL source
 
 To schedule a simulation run, with the appropriate configuration, this will return the **simulation id**:
 
-```id = simulation.run(
+```
+id = simulation.run(
     t_end=1,
     dt=0.1,
     solver='ode')
@@ -32,7 +33,8 @@ This will start the simulation in the servers.
 
 If you're doing it in a script, before downloading the results wait until the simulation is finished, otherwise you might get incomplete results.
 
-```from time import time
+```
+from time import time
 time.sleep(10)
 ```
 
