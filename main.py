@@ -1,9 +1,38 @@
 from typing_extensions import Literal
 import requests
 from uuid import uuid4
+import os
 
 
-HOST = "subcellular-bsp-epfl.apps.hbp.eu/api"
+HOST = "http://localhost:8001"
+
+
+def create_model(path: str, name: str, user_id: str):
+    with open(path) as f:
+        model = requests.post(f"{HOST}/import-bngl", data={"name": name, "user_id": user_id}, files={"file": f}).json()
+        print(f"Created model {model['name']} with id {model['id']}")
+        return model
+
+
+def create_geometry(path: str, user_id: str, model_id: int):
+    head, tail = os.path.split(path)
+    name, _ = os.path.splitext(tail)
+    files = []
+
+    for ext in ("json", "node", "ele", "face"):
+        filename = f"{name}.{ext}"
+        f = os.path.join(head, filename)
+        files.append((filename, open(f, "rb").read()))
+
+    files = tuple((("files"), f) for f in files)
+
+    r = requests.post(
+        f"{HOST}/geometries",
+        data={"name": name, "user_id": user_id, "model_id": model_id},
+        files=files,
+    )
+
+    print(f"Geometry created for model {model_id}")
 
 
 def download_models(user_id: str):
@@ -40,7 +69,4 @@ class Simulation:
         return self.id
 
     def get_sim_traces(self):
-        return requests.get(
-            f"https://{HOST}/get_sim_traces", {"sim_id": self.id}
-        ).json()
-
+        return requests.get(f"https://{HOST}/get_sim_traces", {"sim_id": self.id}).json()

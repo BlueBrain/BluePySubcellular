@@ -1,0 +1,126 @@
+begin model
+
+begin parameters
+  fac 1
+  kCa 0*fac
+  Ca_in 0.08e-6*83.3*fac
+  Ca_out 83.3*fac
+  CBN1_on 75000000*fac
+  CBN2_on 75000000*fac
+  CBC1_on 75000000*fac
+  CBC2_on 75000000*fac
+  CBN1_off 29.5*fac
+  CBN2_off 29.5*fac
+  CBC1_off 29.5*fac
+  CBC2_off 29.5*fac
+  CaMN1_on 770000000*fac
+  CaMN2_on 32000000000*fac
+  CaMC1_on 84000000*fac
+  CaMC2_on 25000000*fac
+  CaMN1_off 160000*fac
+  CaMN2_off 22000*fac
+  CaMC1_off 2600*fac
+  CaMC2_off 6.5*fac
+end parameters
+
+begin compartments
+  Dendrite 3 1.1649e-18 
+  Synapse 3 3.982e-19 
+  PSD 2 3.8885e-13 
+end compartments
+
+begin molecule types
+  Ca(x)
+  CaM(N1,N2,C1,C2,K,Kp~0~1)
+  CB(N1,N2,C1,C2)
+  NMDA(pore~C~O,ank~0~1)
+end molecule types
+
+begin species
+  @Dendrite:Ca(x) 8e-08
+  @Dendrite:CaM(N1,N2,C1,C2,K,Kp~0) 8e-05
+  @Dendrite:CB(N1,N2,C1,C2) 3e-05
+  @Synapse:Ca(x) 8e-08
+  @Synapse:CaM(N1,N2,C1,C2,K,Kp~0) 8e-05
+  @Synapse:CB(N1,N2,C1,C2) 3e-05
+  @PSD:NMDA(pore~C,ank~1) 40.0
+end species
+
+begin observables
+  Molecules Ca_free Ca(x)
+  Molecules Cam_Ca4 CaM(N1!+,N2!+,C1!+,C2!+,K,Kp~0)
+  Molecules CB_Ca4 CB(N1!+,N2!+,C1!+,C2!+)
+  Molecules CaM_ca1n_syn CaM(N1!+,N2,C1,C2,K,Kp~0)@Synapse
+  Molecules CaM_ca1n_den CaM(N1!+,N2,C1,C2,K,Kp~0)@Dendrite
+  Molecules CaM_ca2n_syn CaM(N1!+,N2!+,C1,C2,K,Kp~0)@Synapse
+  Molecules CaM_ca2n_den CaM(N1!+,N2!+,C1,C2,K,Kp~0)@Dendrite
+  Molecules CaM_ca1c_syn CaM(N1,N2,C1!+,C2,K,Kp~0)@Synapse
+  Molecules CaM_ca1c_den CaM(N1,N2,C1!+,C2,K,Kp~0)@Dendrite
+  Molecules CaM_ca2c_syn CaM(N1,N2,C1!+,C2!+,K,Kp~0)@Synapse
+  Molecules CaM_ca2c_den CaM(N1,N2,C1!+,C2!+,K,Kp~0)@Dendrite
+  Molecules CaM_ca1n1c_syn CaM(N1!+,N2,C1!+,C2,K,Kp~0)@Synapse
+  Molecules CaM_ca1n1c_den CaM(N1!+,N2,C1!+,C2,K,Kp~0)@Dendrite
+  Molecules CaM_ca1n2c_syn CaM(N1!+,N2,C1!+,C2!+,K,Kp~0)@Synapse
+  Molecules CaM_ca1n2n_den CaM(N1!+,N2,C1!+,C2!+,K,Kp~0)@Dendrite
+  Molecules CaM_ca2n1c_syn CaM(N1!+,N2!+,C1!+,C2,K,Kp~0)@Synapse
+  Molecules CaM_ca2n1c_den CaM(N1!+,N2!+,C1!+,C2,K,Kp~0)@Dendrite
+  Molecules CaM_ca2n2c CaM(N1!+,N2!+,C1!+,C2!+,K,Kp~0)@Synapse
+  Molecules NMDA_C NMDA(pore~C,ank~1)@PSD
+  Molecules NMDA_O NMDA(pore~O,ank~1)@PSD
+  Molecules Ca_syn Ca(x)@Synapse
+  Molecules Ca_den Ca(x)@Dendrite
+  Molecules CB_ca22_syn CB(N1!+,N2!+,C1!+,C2!+)@Synapse
+  Molecules CB_ca22_den CB(N1!+,N2!+,C1!+,C2!+)@Dendrite
+end observables
+
+begin functions
+  k__5() = Ca_in
+  k__6() = Ca_out
+  k_4() = CBN1_on
+  k_5() = CBN2_on
+  k_6() = CBC1_on
+  k_7() = CBC2_on
+  k_9() = CBN1_off
+  k_10() = CBN2_off
+  k_11() = CBC1_off
+  k_12() = CBC2_off
+  k_14() = CaMN1_on
+  k_15() = CaMN2_on
+  k_16() = CaMC1_on
+  k_17() = CaMC2_on
+  k_19() = CaMN1_off
+  k_20() = CaMN2_off
+  k_21() = CaMC1_off
+  k_22() = CaMC2_off
+  k__9() = kCa*1e3
+  k__10() = 1000/50
+  k__11() = 10*2*700/40/50*1000
+end functions
+
+begin reaction rules
+  NMDA_opening: @PSD:NMDA(pore~C)  -> @PSD:NMDA(pore~O) k__9()
+  NMDA_closing: @PSD:NMDA(pore~O)  -> @PSD:NMDA(pore~C) k__10()
+  NMDA_Ca_input: @PSD:NMDA(pore~O)  -> @PSD:NMDA(pore~O) + @Synapse:Ca(x) k__11()
+  Ca_input: 0 -> @Dendrite:Ca(x) k__5()
+  Ca_extr: @Dendrite:Ca(x) -> 0 k__6()
+  Ca_input1: 0 -> @Synapse:Ca(x) k__5()
+  Ca_extr1: @Synapse:Ca(x) -> 0 k__6()
+  N1_Ca_on: CaM(N2,N1,K,Kp~0) + Ca(x) -> CaM(N2,N1!1,K,Kp~0).Ca(x!1) k_14()
+  N2_Ca_on: CaM(N1!+,N2,K,Kp~0) + Ca(x) -> CaM(N1!+,N2!1,K,Kp~0).Ca(x!1) k_15()
+  C1_Ca_on: CaM(C2,C1,K,Kp~0) + Ca(x) -> CaM(C2,C1!1,K,Kp~0).Ca(x!1) k_16()
+  C2_Ca_on: CaM(C1!+,C2,K,Kp~0) + Ca(x) -> CaM(C1!+,C2!1,K,Kp~0).Ca(x!1) k_17()
+  N1_Ca_off: CaM(N1!1,N2,K,Kp~0).Ca(x!1)->CaM(N1,N2,K,Kp~0) + Ca(x) k_19()
+  N2_Ca_off: CaM(N1!+,N2!1,K,Kp~0).Ca(x!1)->CaM(N1!+,N2,K,Kp~0) + Ca(x) k_20()
+  C1_Ca_off: CaM(C1!1,C2,K,Kp~0).Ca(x!1)->CaM(C1,C2,K,Kp~0) + Ca(x) k_21()
+  C2_Ca_off: CaM(C1!+,C2!1,K,Kp~0).Ca(x!1)->CaM(C1!+,C2,K,Kp~0) + Ca(x) k_22()
+  CB_N1_Ca_on: CB(N2,N1) + Ca(x) -> CB(N2,N1!1).Ca(x!1) k_4()
+  CB_N2_Ca_on: CB(N1!+,N2) + Ca(x) -> CB(N2!1,N1!+).Ca(x!1) k_5()
+  CB_C1_Ca_on: CB(C2,C1) + Ca(x) -> CB(C2,C1!1).Ca(x!1) k_6()
+  CB_C2_Ca_on: CB(C1!+,C2) + Ca(x) -> CB(C1!+,C2!1).Ca(x!1) k_7()
+  CB_N1_Ca_off: CB(N1!1,N2).Ca(x!1)->CB(N1,N2) + Ca(x) k_9()
+  CB_N2_Ca_off: CB(N1!+,N2!1).Ca(x!1)->CB(N1!+,N2) + Ca(x) k_10()
+  CB_C1_Ca_off: CB(C1!1,C2).Ca(x!1)->CB(C1,C2) + Ca(x) k_11()
+  CB_C2_Ca_off: CB(C1!+,C2!1).Ca(x!1)->CB(C1!+,C2) + Ca(x) k_12()
+end reaction rules
+
+end model
