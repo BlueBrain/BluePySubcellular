@@ -4,12 +4,15 @@ from uuid import UUID, uuid4
 import os
 
 
-HOST = "http://localhost:8001"
+API_HOST = "http://localhost:8001"
+HOST = "http://localhost:8888/api"
 
 
 def create_model(path: str, name: str, user_id: str):
     with open(path) as f:
-        model = requests.post(f"{HOST}/import-bngl", data={"name": name, "user_id": user_id}, files={"file": f}).json()
+        model = requests.post(
+            f"{API_HOST}/import-bngl", data={"name": name, "user_id": user_id}, files={"file": f}
+        ).json()
         print(f"Created model {model['name']} with id {model['id']}")
         return model
 
@@ -27,7 +30,7 @@ def create_geometry(path: str, user_id: str, model_id: int):
     files = tuple((("files"), f) for f in files)
 
     r = requests.post(
-        f"{HOST}/geometries",
+        f"{API_HOST}/geometries",
         data={"name": name, "user_id": user_id, "model_id": model_id},
         files=files,
     )
@@ -36,19 +39,11 @@ def create_geometry(path: str, user_id: str, model_id: int):
 
 
 def download_models(user_id: str):
-    return requests.get(f"https://{HOST}/models", {"user_id": user_id}).json()
+    return requests.get(f"{HOST}/models", {"user_id": user_id}).json()
 
 
 def get_sim_traces(sim_id: str):
-    return requests.get(f"https://{HOST}/get_sim_traces", {"sim_id": sim_id}).json()
-
-
-class SimulationConf(TypedDict):
-    userId: UUID
-    tEnd: float
-    dt: float
-    solver: Literal["tetexact", "nfsim", "ode", "ssa"]
-    modelId: int
+    return requests.get(f"{HOST}/get_sim_traces", {"sim_id": sim_id}).json()
 
 
 class Simulation:
@@ -75,12 +70,12 @@ class Simulation:
             "modelId": self.model_id,
         }
 
-        requests.post(f"https://{HOST}/run_sim", json=sim_config)
+        requests.post(f"{HOST}/run_sim", json=sim_config)
 
         return self.id
 
     def get_sim_traces(self):
-        return requests.get(f"https://{HOST}/get_sim_traces", {"sim_id": self.id}).json()
+        return requests.get(f"{HOST}/get_sim_traces", {"sim_id": self.id}).json()
 
 
 def import_stimuli(path: str):
@@ -93,6 +88,6 @@ def import_stimuli(path: str):
                 continue
 
             parsed = line.split()
-            stimuli.append({"t": parsed[0], "type": parsed[1], "target": parsed[2], "value": parsed[3]})
+            stimuli.append({"t": float(parsed[0]), "type": parsed[1], "target": parsed[2], "value": float(parsed[3])})
 
     return stimuli
