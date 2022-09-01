@@ -57,23 +57,42 @@ class Simulation:
         self.id = str(uuid4())
         self.user_id = user_id
 
-    def run(self, t_end: float, dt: float, solver: Literal["tetexact", "nfsim", "ode", "ssa"]):
-        requests.post(
-            f"https://{HOST}/run_sim",
-            json={
-                "userId": self.user_id,
-                "status": "created",
-                "solverConf": {"tEnd": t_end, "dt": dt},
-                "solver": solver,
-                "simId": self.id,
-                "name": "",
-                "id": self.id,
-                "annotation": "",
-                "modelId": self.model_id,
-            },
-        )
+    def run(self, t_end: float, dt: float, solver: Literal["tetexact", "nfsim", "ode", "ssa"], stimuli_path=""):
+
+        stimuli = []
+        if stimuli_path:
+            stimuli = import_stimuli(stimuli_path)
+
+        sim_config = {
+            "userId": self.user_id,
+            "status": "created",
+            "solverConf": {"tEnd": t_end, "dt": dt, "stimulation": stimuli},
+            "solver": solver,
+            "simId": self.id,
+            "name": "",
+            "id": self.id,
+            "annotation": "",
+            "modelId": self.model_id,
+        }
+
+        requests.post(f"https://{HOST}/run_sim", json=sim_config)
 
         return self.id
 
     def get_sim_traces(self):
         return requests.get(f"https://{HOST}/get_sim_traces", {"sim_id": self.id}).json()
+
+
+def import_stimuli(path: str):
+    stimuli = []
+
+    with open(path) as f:
+        for l in f.readlines():
+            line = l.strip()
+            if not line:
+                continue
+
+            parsed = line.split()
+            stimuli.append({"t": parsed[0], "type": parsed[1], "target": parsed[2], "value": parsed[3]})
+
+    return stimuli
