@@ -1,0 +1,50 @@
+begin model
+begin parameters
+    NA 1 #6.02e23 # Avogadro’s number
+    v  1 #3.9820e-16 volume of Spine in liters
+    c2c 1/NA/v    # concentration units convertion coeffitient
+    k2k NA*v      # kinetic rates units convertion coeffitient
+    
+    S  0.01 # plasticity inducing signal 
+    
+    
+    kpf 0.01*k2k # autophosphorilation rate
+    
+    kppf 0.4*k2k # phosphatase binding
+    kppr 1       # phosphatase unbinding
+    
+    kr   1       # dephosphorilation
+end parameters
+
+begin compartments
+Spine 3 1.0
+end compartments
+
+begin molecule types
+K1(Y~0~P)
+P(b)
+end molecule types
+
+begin seed species
+@Spine:K1(Y~0) 100*c2c
+@Spine:P(b)    10*c2c
+end seed species
+
+begin observables
+Molecules K1p @Spine:K1(Y~P)
+end observables
+
+begin functions
+end functions
+
+begin reaction rules
+r0: K1(Y~0)@Spine -> K1(Y~P)@Spine S
+r1: K1(Y~0)@Spine + K1(Y~P)@Spine -> K1(Y~P)@Spine + K1(Y~P)@Spine kpf
+r2: K1(Y~P)@Spine + P(b)@Spine <-> K1(Y~P!1)@Spine.P(b!1)@Spine kppf, kppr
+r3: K1(Y~P!1)@Spine.P(b!1)@Spine -> K1(Y~0)@Spine + P(b)@Spine kr
+end reaction rules
+end model
+
+generate_network({overwrite=>1});
+simulate_ode({t_end=>100, n_steps=>200});
+#EOF
