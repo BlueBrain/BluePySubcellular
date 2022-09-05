@@ -4,8 +4,8 @@ from uuid import UUID, uuid4
 import os
 
 
-API_HOST = "http://localhost:8001"
-HOST = "http://localhost:8888/api"
+API_HOST = "https://subcellular-rest-bsp-epfl.apps.hbp.eu"
+HOST = "https://subcellular-bsp-epfl.apps.hbp.eu/api "
 
 
 def create_model(path: str, name: str, user_id: str):
