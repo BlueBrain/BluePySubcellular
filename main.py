@@ -5,7 +5,7 @@ import os
 
 
 API_HOST = "https://subcellular-rest-bsp-epfl.apps.hbp.eu"
-HOST = "https://subcellular-bsp-epfl.apps.hbp.eu/api "
+HOST = "https://subcellular-bsp-epfl.apps.hbp.eu/api"
 
 
 def create_model(path: str, name: str, user_id: str):
@@ -39,7 +39,7 @@ def create_geometry(path: str, user_id: str, model_id: int):
 
 
 def download_models(user_id: str):
-    return requests.get(f"{HOST}/models", {"user_id": user_id}).json()
+    return requests.get(f"{API_HOST}/models", {"user_id": user_id}).json()
 
 
 def get_sim_traces(sim_id: str):
