@@ -1,11 +1,13 @@
-from typing_extensions import Literal, TypedDict
+from typing_extensions import Literal
 import requests
-from uuid import UUID, uuid4
+from uuid import uuid4
 import os
 
 
 API_HOST = "https://subcellular-rest-bsp-epfl.apps.hbp.eu"
 HOST = "https://subcellular-bsp-epfl.apps.hbp.eu/api"
+# HOST = "http://localhost:8888/api"
+# API_HOST = "http://localhost:8001"
 
 
 def create_model(path: str, name: str, user_id: str):
@@ -47,31 +49,54 @@ def get_sim_traces(sim_id: str):
 
 
 class Simulation:
-    def __init__(self, model_id: int, user_id: str) -> None:
-        self.model_id = model_id
+    def __init__(
+        self,
+        name: str,
+        model_id: int,
+        user_id: str,
+        solver: Literal["tetexact", "tetopsplit", "nfsim", "ode", "ssa"],
+        dt: float,
+        t_end: float,
+        stimuli_path="",
+    ) -> None:
         self.id = str(uuid4())
-        self.user_id = user_id
-
-    def run(self, t_end: float, dt: float, solver: Literal["tetexact", "nfsim", "ode", "ssa"], stimuli_path=""):
-
         stimuli = []
+
         if stimuli_path:
             stimuli = import_stimuli(stimuli_path)
 
-        sim_config = {
-            "userId": self.user_id,
+        self.sim_config = {
+            "name": name,
+            "userId": user_id,
             "status": "created",
             "solverConf": {"tEnd": t_end, "dt": dt, "stimulation": stimuli},
             "solver": solver,
             "simId": self.id,
-            "name": "",
             "id": self.id,
             "annotation": "",
-            "modelId": self.model_id,
+            "modelId": model_id,
         }
 
-        requests.post(f"{HOST}/run_sim", json=sim_config)
+        requests.post(f"{HOST}/create_sim", json=self.sim_config)
 
+    def update_sim(self):
+        self.sim_config = requests.get(f"{HOST}/get_sim", {"sim_id": self.sim_config["id"]}).json()
+
+    @property
+    def progress(self):
+        self.update_sim()
+        return self.sim_config["progress"]
+
+    @property
+    def status(self):
+        self.update_sim()
+        return self.sim_config["status"]
+
+    def run(self):
+        if self.status != "created":
+            print("Simulation already started, see sim.progress or sim.status")
+            return
+        requests.post(f"{HOST}/run_sim", json={**self.sim_config, "simId": self.sim_config["id"]})
         return self.id
 
     def get_sim_traces(self):
