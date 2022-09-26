@@ -2,6 +2,7 @@ from typing_extensions import Literal
 import requests
 from uuid import uuid4
 import os
+import time
 
 
 API_HOST = "https://subcellular-rest-bsp-epfl.apps.hbp.eu"
@@ -80,6 +81,7 @@ class Simulation:
         requests.post(f"{HOST}/create_sim", json=self.sim_config)
 
     def update_sim(self):
+        time.sleep(5)
         self.sim_config = requests.get(f"{HOST}/get_sim", {"sim_id": self.sim_config["id"]}).json()
 
     @property
