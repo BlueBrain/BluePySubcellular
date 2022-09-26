@@ -44,30 +44,30 @@ To add a geometry and mesh to an existing model you will need 4 files (.json, .e
 
 # Running simulations
 
-In order to run a simulation you will need the model id as returned by the create_model command, the instantiate a Simulation:
+In order to run a simulation you will need the model id as returned by the create_model command, then instantiate a Simulation:
 
-`simulation = Simulation(model_id, user_id)`
+`simulation = Simulation(name, model_id, user_id, solver, dt, t_end, stimuli_path)`
 
-Then you can run a simulation with:
-
-```
-id = simulation.run(
-    t_end=1,
-    dt=0.1,
-    solver='tetexact'
-    stimuli_path: 'Path to tsv file'
-    )
-```
+Where solver is one of 'tetexact', 'tetopsplit', 'nfsim', 'ode' or 'ssa'. 
 
 The optional `stimuli_path` argument accepts a string with the path to a tsv file defining the stimuli.
 
+To run the simulation simply call:
+
+`simulation.run()`
+
 This will start the simulation in the servers.
 
-If you're doing it in a script, before downloading the results wait until the simulation is finished, otherwise you might get incomplete results.
+
+To monitor the progress of the simulation you can use:
+
+`simulation.progress` and `simulation.status`
+
+To wait for the results you can use a loop:
 
 ```
-from time import time
-time.sleep(10)
+while simulation.status != 'completed':
+    pass
 ```
 
 Finally you can download the simulation results with:
