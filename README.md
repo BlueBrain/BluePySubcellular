@@ -78,4 +78,4 @@ Finally you can download the simulation results with:
 
 The development of this software was supported by funding from HBP SGA3.ƒ
 
-Copyright © 2015-2022 Blue Brain Project/EPFL
+Copyright © 2022 Blue Brain Project/EPFL
