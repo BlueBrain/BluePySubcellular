@@ -1,7 +1,7 @@
 # BluePySubcellular
 
-This repo hosts a Python API for the subcellular application.
-It allows users of the subcellular application to download their existing models and to run simulations in the cloud.
+This repo hosts a Python API for the Subcellular application.
+It allows users of the Subcellular application to download their existing models and to run simulations in the cloud.
 
 # Installation
 
@@ -16,69 +16,86 @@ Then install the package using pip:
 
 # Examples
 
-The following section contain some examples showing how to use this API.
+The following section contain some examples showing how to use this API. For details on the Subcellular app please see the [documentation](https://subcellular-bsp-epfl.apps.hbp.eu/static/docs.html).
 
 ## Authentication
 
-In order to be able to create and fetch models you need you `User id`. To get it go to the subcellular app http://subcellular-bsp-epfl.apps.hbp.eu/ and click on `User` on the top right corner.
+In order to be able to create and fetch models you need you `User id`. To get it go to the Subcellular app http://subcellular-bsp-epfl.apps.hbp.eu/ and click on `User` on the top right corner.
 
 
 ## Downloading models
 
-To download your existing models simply run the following command
+To download your existing models simply run the following command\
 
-`download_models('User id')`
-
+    import bluepysc
+    bluepysc.download_models("User id")
 
 ## Creating models
 
 To create a model from a `bngl` file run
 
-`create_model(path='example.bngl', name='Example model', user_id: 'User id')`
+    model_id = bluepysc.create_model(path="example.bngl", name="Example model", user_id="User id")
 
-This command returns the id of the new model.
+This command returns the `model_id` of the new model.
 
 ## Adding a geometry and mesh
 
-To add a geometry and mesh to an existing model you will need 4 files (.json, .ele, .node, .face).
+To add a geometry and mesh to an existing model you will need 4 files describing the geometry (`.json`, `.ele`, `.node` and `.face` files).
 
-`create_geometry(path='example.json', user_id: 'User id', model_id: 'integer')`
+    bluepysc.create_geometry(path="example.json", user_id=user_id, model_id=model_id)
 
-    path: The path to any of the 4 files mentioned above, all 4 files must have the same name (e.g. spine.json, spine.ele, spine.node, spine.face).
-    user_id: A valid User id 
-    model_id: A valid model id, it is returned by the create_model command.
+    path: The path to any of the 4 files mentioned above. All 4 files must have the same name (e.g. `spine.json, spine.ele, spine.node, spine.face`).
+    user_id: A valid User id.
+    model_id: A valid model id as returned e.g. from the `create_model` command.
 
 
 ## Running simulations
 
 In order to run a simulation you will need the model id as returned by the create_model command, then instantiate a simulation:
 
-`simulation = Simulation(name, model_id, user_id, solver, dt, t_end, stimuli_path)`
+    simulation = bluepysc.Simulation(name, user_id, model_id, solver, dt, t_end, stimuli_path)
+    
+    name: Name of the simulation.
+    user_id: A valid User id.
+    model_id: A valid model id as returned e.g. from the `create_model` command.
+    solver: Name of the solver (one of 'tetexact', 'tetopsplit', 'nfsim', 'ode' or 'ssa'; see the [documentation](https://subcellular-bsp-epfl.apps.hbp.eu/static/docs.html) for details).
+    dt: Time step (in seconds, e.g `0.02`).
+    t_end: Total simulation time (in seconds, e.g. `10.0`)
+    stimuli_path: Optional string argument defining the path to a `.tsv` file containing the stimuli.
 
-Where solver is one of 'tetexact', 'tetopsplit', 'nfsim', 'ode' or 'ssa'.
-
-The optional `stimuli_path` argument accepts a string with the path to a `tsv` file defining the stimuli.
 
 To run the simulation simply call:
 
-`simulation.run()`
+    simulation.run()
 
-This will start the simulation on the servers.
+which will start the simulation on the servers.
 
 To monitor the progress of the simulation you can use:
 
-`simulation.progress` and `simulation.status`
+    simulation.progress
+    
+to get the progress of the simulation (in %) and 
+
+    simulation.status
+    
+to get the status of the simulation which can be 
+
+    started: The simulation is running.
+    error: An error occurred. Plaese consult the log on the Subcellular app.
+    finished: The simulation has been finished.
 
 To wait for the results you can use a loop:
 
-```
-while simulation.status != 'completed':
-    pass
-```
 
-Finally you can download the simulation results with:
+    while simulation.status not in ["error", "finished"]:
+        time.sleep(1)
+        pass
 
-`simulation.get_sim_traces()`
+Finally you can download the simulation results using
+
+    traces = simulation.get_sim_traces()
+    
+to plot/analyze them further.      
 
 # Funding & Acknowledgment
 
