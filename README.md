@@ -27,14 +27,14 @@ In order to be able to create and fetch models you need you `User id`. To get it
 
 To download your existing models simply run the following command\
 
-    import bluepysc
-    bluepysc.download_models("User id")
+    import BluePySubcellular
+    BluePySubcellular.download_models("User id")
 
 ## Creating models
 
 To create a model from a `bngl` file run
 
-    model_id = bluepysc.create_model(path="example.bngl", name="Example model", user_id="User id")
+    model_id = BluePySubcellular.create_model(path="example.bngl", name="Example model", user_id="User id")
 
 This command returns the `model_id` of the new model.
 
@@ -42,7 +42,7 @@ This command returns the `model_id` of the new model.
 
 To add a geometry and mesh to an existing model you will need 4 files describing the geometry (`.json`, `.ele`, `.node` and `.face` files).
 
-    bluepysc.create_geometry(path="example.json", user_id=user_id, model_id=model_id)
+    BluePySubcellular.create_geometry(path="example.json", user_id=user_id, model_id=model_id)
 
     path: The path to any of the 4 files mentioned above. All 4 files must have the same name (e.g. `spine.json, spine.ele, spine.node, spine.face`).
     user_id: A valid User id.
@@ -53,7 +53,7 @@ To add a geometry and mesh to an existing model you will need 4 files describing
 
 In order to run a simulation you will need the model id as returned by the create_model command, then instantiate a simulation:
 
-    simulation = bluepysc.Simulation(name, user_id, model_id, solver, dt, t_end, stimuli_path)
+    simulation = BluePySubcellular.Simulation(name, user_id, model_id, solver, dt, t_end, stimuli_path)
     
     name: Name of the simulation.
     user_id: A valid User id.
