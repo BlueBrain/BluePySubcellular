@@ -25,7 +25,7 @@ In order to be able to create and fetch models you need you `User id`. To get it
 
 ## Downloading models
 
-To download your existing models simply run the following command\
+To download your existing models simply run the following command:
 
     import BluePySubcellular
     BluePySubcellular.download_models("User id")
@@ -81,7 +81,7 @@ to get the progress of the simulation (in %) and
 to get the status of the simulation which can be 
 
     started: The simulation is running.
-    error: An error occurred. Ple consult the log on the Subcellular app.
+    error: An error occurred. Please consult the log on the Subcellular app.
     finished: The simulation has been finished.
 
 To wait for the results you can use a loop:
