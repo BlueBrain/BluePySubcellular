@@ -101,6 +101,7 @@ Finally you can download the simulation results using
 to plot/analyze them further.      
 
 # Citation
+When you use this software, we kindly ask you to cite the following DOI (under "Cite as"):
 
 [![DOI](https://zenodo.org/badge/DOI/10.5281/zenodo.7225409.svg)](https://doi.org/10.5281/zenodo.7225409)
 
