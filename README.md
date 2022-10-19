@@ -100,6 +100,11 @@ Finally you can download the simulation results using
     
 to plot/analyze them further.      
 
+# Citation
+
+[![DOI](https://zenodo.org/badge/DOI/10.5281/zenodo.7225409.svg)](https://doi.org/10.5281/zenodo.7225409)
+
+
 # Funding & Acknowledgment
 
 The development of this software was supported by funding to the Blue Brain Project, a research center of the École polytechnique fédérale de Lausanne (EPFL), from the Swiss government's ETH Board of the Swiss Federal Institutes of Technology and from HBP SGA3.
