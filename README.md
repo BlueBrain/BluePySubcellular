@@ -7,11 +7,14 @@ It allows users of the Subcellular application to download their existing models
 
 To install the API, first clone the repo:
 
-`git clone git@bbpgitlab.epfl.ch:nse/subcellular-api.git`
+`git clone https://github.com/BlueBrain/BluePySubcellular.git`
 
 Then install the package using pip:
 
-`pip install .`
+```
+cd BluePySubcellular
+pip install .
+```
 
 
 # Examples
