@@ -1,8 +1,8 @@
-from typing_extensions import Literal
-import requests
-from uuid import uuid4
 import os
 import time
+from uuid import uuid4
+from typing_extensions import Literal
+import requests
 
 
 API_HOST = "https://subcellular-rest-bsp-epfl.apps.hbp.eu"
@@ -29,12 +29,13 @@ def create_geometry(path: str, user_id: str, model_id: int):
 
     for ext in ("json", "node", "ele", "face"):
         filename = f"{name}.{ext}"
-        f = os.path.join(head, filename)
-        files.append((filename, open(f, "rb").read()))
+        fpath = os.path.join(head, filename)
+        with open(fpath, "rb") as file:
+            files.append((filename, file.read()))
 
     files = tuple((("files"), f) for f in files)
 
-    r = requests.post(
+    requests.post(
         f"{API_HOST}/geometries",
         data={"name": name, "user_id": user_id, "model_id": model_id},
         files=files,
@@ -58,11 +59,11 @@ class Simulation:
         model_id: int,
         user_id: str,
         solver: Literal["tetexact", "tetopsplit", "nfsim", "ode", "ssa"],
-        dt: float,
+        dt: float,  # pylint: disable=C0103
         t_end: float,
         stimuli_path="",
     ) -> None:
-        self.id = str(uuid4())
+        self.id = str(uuid4())  # pylint: disable=C0103
         stimuli = []
 
         if stimuli_path:
@@ -110,9 +111,9 @@ class Simulation:
 def import_stimuli(path: str):
     stimuli = []
 
-    with open(path) as f:
-        for l in f.readlines():
-            line = l.strip()
+    with open(path) as files:
+        for lines in files.readlines():
+            line = lines.strip()
             if not line:
                 continue
 
