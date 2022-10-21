@@ -2,9 +2,10 @@ name: Pylint
 run-name: Linting, format checking
 on: [push]
 jobs:
-  Explore-GitHub-Actions:
+  Pylint:
     runs-on: ubuntu-latest
     steps:
+      - run: cd BluePySubcellular
       - run: pip install black pylint
       - run: black . --check
       - run: pylint .
