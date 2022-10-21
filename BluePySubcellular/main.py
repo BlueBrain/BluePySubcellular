@@ -14,7 +14,9 @@ HOST = "https://subcellular-bsp-epfl.apps.hbp.eu/api"
 def create_model(path: str, name: str, user_id: str):
     with open(path) as f:
         model = requests.post(
-            f"{API_HOST}/import-bngl", data={"name": name, "user_id": user_id}, files={"file": f}
+            f"{API_HOST}/import-bngl",
+            data={"name": name, "user_id": user_id},
+            files={"file": f},
         ).json()
         print(f"Created model {model['name']} with id {model['id']}")
         return model
@@ -115,6 +117,13 @@ def import_stimuli(path: str):
                 continue
 
             parsed = line.split()
-            stimuli.append({"t": float(parsed[0]), "type": parsed[1], "target": parsed[2], "value": float(parsed[3])})
+            stimuli.append(
+                {
+                    "t": float(parsed[0]),
+                    "type": parsed[1],
+                    "target": parsed[2],
+                    "value": float(parsed[3]),
+                }
+            )
 
     return stimuli

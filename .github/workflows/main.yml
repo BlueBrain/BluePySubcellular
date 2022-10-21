@@ -7,9 +7,8 @@ jobs:
     steps:
       - name: Check out repository code
         uses: actions/checkout@v3
-      - run: cd BluePySubcellular
       - run: pip install black pylint
-      - run: black . --check
-      - run: pylint .
+      - run: black BluePySubcellular -l 120 --check
+      - run: pylint BluePySubcellular
       - run: echo "🍏 This job's status is ${{ job.status }}."
      
