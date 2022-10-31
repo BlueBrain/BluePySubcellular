@@ -56,11 +56,11 @@ To add a geometry and mesh to an existing model you will need 4 files describing
 
 In order to run a simulation you will need the model id as returned by the create_model command, then instantiate a simulation:
 
-    simulation = BluePySubcellular.Simulation(name, user_id, model_id, solver, dt, t_end, stimuli_path)
+    simulation = BluePySubcellular.Simulation(name, model_id, user_id, solver, dt, t_end, stimuli_path)
     
     name: Name of the simulation.
-    user_id: A valid User id.
     model_id: A valid model id as returned e.g. from the `create_model` command.
+    user_id: A valid User id.
     solver: Name of the solver (one of 'tetexact', 'tetopsplit', 'nfsim', 'ode' or 'ssa'; see the [documentation](https://subcellular-bsp-epfl.apps.hbp.eu/static/docs.html) for details).
     dt: Time step (in seconds, e.g `0.02`).
     t_end: Total simulation time (in seconds, e.g. `10.0`)
